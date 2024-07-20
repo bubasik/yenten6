@@ -4233,6 +4233,24 @@ std::shared_ptr<CWallet> CWallet::CreateWalletFromFile(interfaces::Chain& chain,
             InitError(_("Unable to generate initial keys"));
             return nullptr;
         }
+        
+        // segwit address
+        /**
+        CPubKey newDefaultKeySegWit;
+        if (walletInstance->GetKeyFromPool(newDefaultKeySegWit, false)) {
+            walletInstance->LearnRelatedScripts(newDefaultKeySegWit, OutputType::OUTPUT_TYPE_P2SH_SEGWIT);
+            CTxDestination dest = GetDestinationForKey(newDefaultKeySegWit, OutputType::OUTPUT_TYPE_P2SH_SEGWIT);
+            walletInstance->SetAddressBook(dest, "", "receive");
+        }
+        **/
+
+        // legacy address yenten6 - fix?
+        CPubKey newDefaultKeyLegacy;
+        if (walletInstance->GetKeyFromPool(newDefaultKeyLegacy, false)) {
+            walletInstance->LearnRelatedScripts(newDefaultKeyLegacy, OutputType::LEGACY);
+            CTxDestination dest = GetDestinationForKey(newDefaultKeyLegacy, OutputType::LEGACY);
+            walletInstance->SetAddressBook(dest, "", "receive");
+        }        
 
         auto locked_chain = chain.assumeLocked();  // Temporary. Removed in upcoming lock cleanup
         walletInstance->ChainStateFlushed(locked_chain->getTipLocator());
